@@ -160,6 +160,9 @@ source $BIN_DIR/steps/pip-uninstall
 # Mercurial support.
 source $BIN_DIR/steps/mercurial
 
+# SWIG support.
+source $BIN_DIR/steps/SWIG
+
 # Pylibmc support.
 source $BIN_DIR/steps/pylibmc
 
