@@ -48,19 +48,20 @@ if (grep M2Crypto requirements.txt  &> /dev/null) then
 		
 		rm swig.tar.gz
 		echo "SWIG installed." | indent
-		pwd | indent
-# 		find .
+
 	fi
   
-	export SWIG=$(pwd)/.heroku/vendor/swig/bin/swig
+	export SWIG=$(pwd)/.heroku/vendor/bin/swig
 
-	echo "Updating path ..." | indent  
-  	PATH="$PATH:$BUILD_DIR/.heroku/vendor/bin"
-  	export PATH
-  	
-  	echo "Performing set-env on PATH ..." | indent
-  	set-env PATH="$PATH:$BUILD_DIR/.heroku/vendor/bin"
-  	echo $PATH | indent
+# 	echo "Updating path ..." | indent  
+#   	PATH="$PATH:$BUILD_DIR/.heroku/vendor/bin"
+#   	export PATH
+#   	
+#   	echo "Performing set-env on PATH ..." | indent
+#   	set-env PATH="$PATH:$BUILD_DIR/.heroku/vendor/bin"
+
+  	echo "PATH:" | indent
+  	echo "$PATH" | indent
   	
   	echo "Setting SWIG_LIB environment variable ..." | indent
   	export SWIG_LIB=$BUILD_DIR/.heroku/vendor/share/swig/2.0.5
