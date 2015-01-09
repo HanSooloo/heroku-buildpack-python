@@ -17,6 +17,11 @@ PKG_CONFIG_PATH="/app/.heroku/vendor/lib/pkgconfig:$PKG_CONFIG_PATH"
 # Syntax sugar.
 source $BIN_DIR/utils
 
+# see the ENV
+echo "Current ENV follows ..."
+env
+echo "..."
+
 bpwatch start swig_install
 
 # If M2Crypto exists within requirements, use vendored SWIG.
@@ -60,5 +65,10 @@ if (grep M2Crypto requirements.txt  &> /dev/null) then
   	echo "Setting SWIG_LIB environment variable ..." | indent
   	export SWIG_LIB=$BUILD_DIR/.heroku/vendor/share/swig/2.0.5
 fi
+
+# see the ENV
+echo "Current ENV follows ..."
+env
+echo "..."
 
 bpwatch stop swig_install
