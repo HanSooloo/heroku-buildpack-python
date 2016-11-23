@@ -10,7 +10,11 @@
 # This script is invoked by [`bin/compile`](/).
 
 # The location of the pre-compiled cryptography binary.
-VENDORED_SWIG="https://s3.amazonaws.com/guybowden/swig.tar.gz"
+SWIG_VER="3.0.10"
+SWIG_BASE="swig-$SWIG_VER"
+SWIG_EXT=".tar.gz"
+SWIG_FILE=$SWIG_BASE$SWIG_EXT
+VENDORED_SWIG="http://prdownloads.sourceforge.net/swig/$SWIG_FILE"
 
 PKG_CONFIG_PATH="/app/.heroku/vendor/lib/pkgconfig:$PKG_CONFIG_PATH"
 
@@ -25,46 +29,47 @@ echo "..."
 bpwatch start swig_install
 
 # If M2Crypto exists within requirements, use vendored SWIG.
-# Instead of pip-grep we are using regular grep,  
+# Instead of pip-grep we are using regular grep,
 # since our M2Crypto is sourced from a git repo sitting in GitHub.
 if (grep M2Crypto requirements.txt  &> /dev/null) then
 
 	if [ -d ".heroku/vendor/bin/swig" ]; then
-		export LIBSWIG=$(pwd)/.heroku/vendor/share/swig/2.0.5
+		export LIBSWIG=$(pwd)/.heroku/vendor/share/swig/$SWIG_VER
 	else
 		puts-step "Noticed SWIG. Bootstrapping SWIG."
 		mkdir -p .heroku/vendor
 
-		echo "Downloading SWIG from $VENDORED_SWIG" | indent
+		echo "Downloading SWIG source from $VENDORED_SWIG" | indent
 		# Download SWIG
-		curl -O $VENDORED_SWIG >/dev/null 2>&1
+		curl -o /tmp/$SWIG_FILE -L $VENDORED_SWIG >/dev/null 2>&1
 
 		# Extract SWIG into target vendor directory.
-		echo "Extracting into target vendor directory." | indent
-		tar zxvf swig.tar.gz --strip-components 1 -C .heroku/vendor &> /dev/null
+		echo "Extracting into temporary directory." | indent
+		tar zxvf /tmp/$SWIG_FILE -C /tmp/ &> /dev/null
 
-# 		mv swig $CACHE_DIR/swig
-		# No need to move the built SWIG to CACHE_DIR, since the compile script does that
-		
-		rm swig.tar.gz
+		# Build SWIG in place
+		echo "Building SWIG in place." | indent
+		cd /tmp/$SWIG_BASE
+		./configure --prefix=/app/.heroku/vendor
+		make
+		make install
+
+		# Cleanup after build
+		echo "Cleanup build files." | indent
+		rm -rf /tmp/$SWIG_BASE*
+
 		echo "SWIG installed." | indent
 
 	fi
-  
+
 	export SWIG=$(pwd)/.heroku/vendor/bin/swig
 
-# 	echo "Updating path ..." | indent  
-#   	PATH="$PATH:$BUILD_DIR/.heroku/vendor/bin"
-#   	export PATH
-#   	
-#   	echo "Performing set-env on PATH ..." | indent
-#   	set-env PATH="$PATH:$BUILD_DIR/.heroku/vendor/bin"
+	echo "PATH:" | indent
+	echo "$PATH" | indent
 
-  	echo "PATH:" | indent
-  	echo "$PATH" | indent
-  	
-  	echo "Setting SWIG_LIB environment variable ..." | indent
-  	export SWIG_LIB=$BUILD_DIR/.heroku/vendor/share/swig/2.0.5
+	echo "Setting SWIG_LIB environment variable ..." | indent
+	export SWIG_LIB=$BUILD_DIR/.heroku/vendor/share/swig/$SWIG_VER
+
 fi
 
 # see the ENV
