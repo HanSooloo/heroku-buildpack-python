@@ -18,7 +18,7 @@ VENDORED_SWIG="http://prdownloads.sourceforge.net/swig/$SWIG_FILE"
 
 PKG_CONFIG_PATH="/app/.heroku/vendor/lib/pkgconfig:$PKG_CONFIG_PATH"
 
-PWD=$(pwd)
+CURRENT_DIR=$(pwd)
 
 # Syntax sugar.
 source $BIN_DIR/utils
@@ -51,15 +51,15 @@ if (grep M2Crypto requirements.txt  &> /dev/null) then
 		make
 		make install
 
+		echo "Revert back to previous directory: $CURRENT_DIR" | indent
+		cd $CURRENT_DIR
+
 		# Cleanup after build
 		echo "Cleanup build files." | indent
 		rm -rf /tmp/$SWIG_BASE*
 
 		echo "SWIG installed." | indent
 
-		echo "Revert back to previous directory." | indent
-		cd $PWD
-		
 	fi
 
 	export SWIG=$(pwd)/.heroku/vendor/bin/swig
