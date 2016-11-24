@@ -14,6 +14,7 @@ SWIG_VER="3.0.10"
 SWIG_BASE="swig-$SWIG_VER"
 SWIG_EXT=".tar.gz"
 SWIG_FILE=$SWIG_BASE$SWIG_EXT
+SWIG_TMP="/tmp/$SWIG_FILE"
 VENDORED_SWIG="http://prdownloads.sourceforge.net/swig/$SWIG_FILE"
 
 PKG_CONFIG_PATH="/app/.heroku/vendor/lib/pkgconfig:$PKG_CONFIG_PATH"
@@ -36,16 +37,18 @@ echo "============" | indent
 if (grep M2Crypto requirements.txt  &> /dev/null) then
 
 	if [ ! -f ".heroku/vendor/bin/swig" ]; then
-		puts-step "Noticed SWIG. Bootstrapping SWIG."
+		puts-step "Noticed M2Crypto. Bootstrapping SWIG."
 		mkdir -p $VENDOR_DIR
 
 		echo "Downloading SWIG source from $VENDORED_SWIG" | indent
+		echo "Destination: $SWIG_TMP"
 		# Download SWIG
-		curl -o /tmp/$SWIG_FILE -L $VENDORED_SWIG >/dev/null 2>&1
+		curl -o $SWIG_TMP -L $VENDORED_SWIG >/dev/null 2>&1
 
 		# Extract SWIG into target vendor directory.
 		echo "Extracting into temporary directory." | indent
-		tar zxvf /tmp/$SWIG_FILE -C /tmp/ &> /dev/null
+		echo "Destination: /tmp"
+		tar zxvf $SWIG_TMP -C /tmp/ &> /dev/null
 
 		# Build SWIG in place
 		echo "Building SWIG in place." | indent
