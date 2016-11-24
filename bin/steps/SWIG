@@ -40,40 +40,43 @@ if (grep M2Crypto requirements.txt  &> /dev/null) then
 		puts-step "Noticed M2Crypto. Bootstrapping SWIG."
 		mkdir -p $VENDOR_DIR
 
-		echo "Downloading SWIG source from $VENDORED_SWIG" | indent
-		echo "Destination: $SWIG_TMP"
+		puts-line "Downloading SWIG source from $VENDORED_SWIG"
+		puts-line "Destination: $SWIG_TMP"
 		# Download SWIG
 		curl -o $SWIG_TMP -L $VENDORED_SWIG >/dev/null 2>&1
+		puts-line
 
 		# Extract SWIG into target vendor directory.
-		echo "Extracting into temporary directory." | indent
-		echo "Destination: /tmp"
+		puts-line "Extracting into temporary directory."
+		puts-line "Destination: /tmp"
 		tar zxvf $SWIG_TMP -C /tmp/ &> /dev/null
+		puts-line
 
 		# Build SWIG in place
-		echo "Building SWIG in place." | indent
+		puts-line "Building SWIG in place."
 		cd /tmp/$SWIG_BASE
-		./configure --prefix=/app/$VENDOR_DIR
-		make
-		make install
+		./configure --prefix=/app/$VENDOR_DIR &> /dev/null
+		make &> /dev/null
+		make install &> /dev/null
+		puts-line
 
-		echo "Revert back to previous directory: $CURRENT_DIR" | indent
+		puts-line "Revert back to previous directory: $CURRENT_DIR"
 		cd $CURRENT_DIR
 
 		# Cleanup after build
-		echo "Cleanup build files." | indent
+		puts-line "Cleanup build files."
 		rm -rf /tmp/$SWIG_BASE*
 
 		# Confirm install
 		SWIG_INSTALLED=$($BUILD_DIR/$VENDOR_DIR/bin/swig -version | sed -n '2p')
-		echo "SWIG installed as: $SWIG_INSTALLED" | indent
+		puts-line "SWIG installed as: $SWIG_INSTALLED"
 
 	else
 		export LIBSWIG=$(pwd)/.heroku/vendor/share/swig/$SWIG_VER
 
 	fi
 
-	echo "Setting SWIG_LIB environment variable ..." | indent
+	puts-line "Setting SWIG_LIB environment variable ..."
 	export SWIG=$(pwd)/.heroku/vendor/bin/swig
 	export SWIG_LIB=$BUILD_DIR/$VENDOR_DIR/share/swig/$SWIG_VER
 
