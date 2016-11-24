@@ -9,7 +9,7 @@
 #
 # This script is invoked by [`bin/compile`](/).
 
-# The location of the pre-compiled cryptography binary.
+# SWIG variables and source location.
 SWIG_VER="3.0.10"
 SWIG_BASE="swig-$SWIG_VER"
 SWIG_EXT=".tar.gz"
@@ -19,11 +19,16 @@ VENDORED_SWIG="http://prdownloads.sourceforge.net/swig/$SWIG_FILE"
 PKG_CONFIG_PATH="/app/.heroku/vendor/lib/pkgconfig:$PKG_CONFIG_PATH"
 
 CURRENT_DIR=$(pwd)
+VENDOR_DIR=".heroku/vendor"
 
 # Syntax sugar.
 source $BIN_DIR/utils
 
 bpwatch start swig_install
+
+echo "ENV follows:" | indent
+env
+echo "============" | indent
 
 # If M2Crypto exists within requirements, use vendored SWIG.
 # Instead of pip-grep we are using regular grep,
@@ -32,7 +37,7 @@ if (grep M2Crypto requirements.txt  &> /dev/null) then
 
 	if [ ! -f ".heroku/vendor/bin/swig" ]; then
 		puts-step "Noticed SWIG. Bootstrapping SWIG."
-		mkdir -p .heroku/vendor
+		mkdir -p $VENDOR_DIR
 
 		echo "Downloading SWIG source from $VENDORED_SWIG" | indent
 		# Download SWIG
@@ -45,7 +50,7 @@ if (grep M2Crypto requirements.txt  &> /dev/null) then
 		# Build SWIG in place
 		echo "Building SWIG in place." | indent
 		cd /tmp/$SWIG_BASE
-		./configure --prefix=/app/.heroku/vendor
+		./configure --prefix=/app/$VENDOR_DIR
 		make
 		make install
 
@@ -56,17 +61,18 @@ if (grep M2Crypto requirements.txt  &> /dev/null) then
 		echo "Cleanup build files." | indent
 		rm -rf /tmp/$SWIG_BASE*
 
-		echo "SWIG installed." | indent
+		# Confirm install
+		SWIG_INSTALLED=$($BUILD_DIR/$VENDOR_DIR/bin/swig | sed -n '2p')
+		echo "SWIG installed as: $SWIG_INSTALLED" | indent
 
 	else
 		export LIBSWIG=$(pwd)/.heroku/vendor/share/swig/$SWIG_VER
-		
+
 	fi
 
-	export SWIG=$(pwd)/.heroku/vendor/bin/swig
-
 	echo "Setting SWIG_LIB environment variable ..." | indent
-	export SWIG_LIB=$BUILD_DIR/.heroku/vendor/share/swig/$SWIG_VER
+	export SWIG=$(pwd)/.heroku/vendor/bin/swig
+	export SWIG_LIB=$BUILD_DIR/$VENDOR_DIR/share/swig/$SWIG_VER
 
 fi
 
