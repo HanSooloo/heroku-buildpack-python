@@ -62,7 +62,7 @@ if (grep M2Crypto requirements.txt  &> /dev/null) then
 		rm -rf /tmp/$SWIG_BASE*
 
 		# Confirm install
-		SWIG_INSTALLED=$($BUILD_DIR/$VENDOR_DIR/bin/swig | sed -n '2p')
+		SWIG_INSTALLED=$($BUILD_DIR/$VENDOR_DIR/bin/swig -version | sed -n '2p')
 		echo "SWIG installed as: $SWIG_INSTALLED" | indent
 
 	else
