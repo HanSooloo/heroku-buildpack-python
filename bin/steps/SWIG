@@ -30,9 +30,7 @@ bpwatch start swig_install
 # since our M2Crypto is sourced from a git repo sitting in GitHub.
 if (grep M2Crypto requirements.txt  &> /dev/null) then
 
-	if [ -d ".heroku/vendor/bin/swig" ]; then
-		export LIBSWIG=$(pwd)/.heroku/vendor/share/swig/$SWIG_VER
-	else
+	if [ ! -f ".heroku/vendor/bin/swig" ]; then
 		puts-step "Noticed SWIG. Bootstrapping SWIG."
 		mkdir -p .heroku/vendor
 
@@ -60,6 +58,9 @@ if (grep M2Crypto requirements.txt  &> /dev/null) then
 
 		echo "SWIG installed." | indent
 
+	else
+		export LIBSWIG=$(pwd)/.heroku/vendor/share/swig/$SWIG_VER
+		
 	fi
 
 	export SWIG=$(pwd)/.heroku/vendor/bin/swig
