@@ -47,7 +47,7 @@ if (grep M2Crypto requirements.txt  &> /dev/null) then
 		puts-line
 
 		# Extract SWIG into target vendor directory.
-		puts-line "Extracting into temporary directory."
+		puts-line "Extracting SWIG into temporary directory."
 		puts-line "Destination: /tmp"
 		tar zxvf $SWIG_TMP -C /tmp/ &> /dev/null
 		puts-line
@@ -76,7 +76,7 @@ if (grep M2Crypto requirements.txt  &> /dev/null) then
 
 	fi
 
-	puts-line "Setting SWIG_LIB environment variable ..."
+	puts-line "Setting SWIG environment variables ..."
 	export SWIG=$(pwd)/.heroku/vendor/bin/swig
 	export SWIG_LIB=$BUILD_DIR/$VENDOR_DIR/share/swig/$SWIG_VER
 
