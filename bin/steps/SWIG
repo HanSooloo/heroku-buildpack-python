@@ -27,10 +27,6 @@ source $BIN_DIR/utils
 
 bpwatch start swig_install
 
-echo "ENV follows:" | indent
-env
-echo "============" | indent
-
 # If M2Crypto exists within requirements, use vendored SWIG.
 # Instead of pip-grep we are using regular grep,
 # since our M2Crypto is sourced from a git repo sitting in GitHub.
