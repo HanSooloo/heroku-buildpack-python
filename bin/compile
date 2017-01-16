@@ -14,7 +14,7 @@
 
 # Fail fast and fail hard.
 set -eo pipefail
-
+set -x
 [ "$BUILDPACK_XTRACE" ] && set -o xtrace
 
 # Prepend proper path for virtualenv hackery. This will be deprecated soon.
@@ -272,4 +272,3 @@ if [[ ! "$SKIP_MOVE_BUILD" ]]; then
   bpwatch stop anvil_appdir_commit
   bpwatch stop compile
 fi
-
