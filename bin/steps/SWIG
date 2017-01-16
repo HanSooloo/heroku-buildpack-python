@@ -52,6 +52,10 @@ if (grep M2Crypto requirements.txt  &> /dev/null) then
 		puts-line "Building SWIG in place."
 		cd /tmp/$SWIG_BASE
 		./configure --prefix=/app/$VENDOR_DIR &> /dev/null
+
+    puts-line "Attempting to fix OpenSSL include issue."
+    cp -v /usr/include/x86_64-linux-gnu/openssl/opensslconf.h /usr/include/openssl/opensslconf.h
+    
 		make &> /dev/null
 		make install &> /dev/null
 		puts-line
